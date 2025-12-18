@@ -1,40 +1,43 @@
-<?php
+<?php 
 include 'config.php';
+header_web("Registrasi Dosen");
 
 if (isset($_POST['register'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $token = bin2hex(random_bytes(16));
-    // Set masa berlaku 24 jam dari sekarang
     $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-    // Cek apakah email sudah ada
     $check = mysqli_query($conn, "SELECT * FROM users WHERE username = '$email'");
     if (mysqli_num_rows($check) > 0) {
-        $error = "Email sudah terdaftar!";
+        echo "<div class='alert alert-danger'>Email sudah digunakan!</div>";
     } else {
-        $query = "INSERT INTO users (username, password, token, token_expiry) 
-                  VALUES ('$email', '$password', '$token', '$expiry')";
-        if (mysqli_query($conn, $query)) {
-            $msg = "Registrasi Berhasil! Silakan klik link aktivasi di bawah ini (Simulasi Email):<br>
-                    <a href='aktivasi.php?token=$token'>AKTIVASI AKUN SAYA</a>";
-        }
+        mysqli_query($conn, "INSERT INTO users (username, password, token, token_expiry) VALUES ('$email', '$password', '$token', '$expiry')");
+        echo "<div class='alert alert-success'>Registrasi Berhasil! <br> Link Aktivasi: <a href='aktivasi.php?token=$token'>Klik Disini</a></div>";
     }
 }
 ?>
 
-<!DOCTYPE html>
-<html>
-<head><title>Registrasi Dosen</title></head>
-<body>
-    <h2>Form Registrasi Dosen</h2>
-    <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>
-    <?php if(isset($msg)) echo "<p style='color:green'>$msg</p>"; ?>
-    <form method="POST">
-        <input type="email" name="email" placeholder="Email (Username)" required><br><br>
-        <input type="password" name="password" placeholder="Password" required><br><br>
-        <button type="submit" name="register">Daftar</button>
-    </form>
-    <p>Sudah punya akun? <a href="login.php">Login di sini</a></p>
-</body>
-</html>
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4">
+            <h3 class="text-center mb-4">Daftar Akun Dosen</h3>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="nama@kampus.com" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" name="register" class="btn btn-primary w-100">Daftar Sekarang</button>
+            </form>
+            <div class="text-center mt-3">
+                Sudah punya akun? <a href="login.php">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php footer_web(); ?>
