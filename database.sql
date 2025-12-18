@@ -9,7 +9,8 @@ CREATE TABLE users (
     status ENUM('PENDING', 'AKTIF') DEFAULT 'PENDING',
     token VARCHAR(255) NULL,
     token_expiry DATETIME NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_
+        TIMESTAMP
 );
 
 CREATE TABLE mata_kuliah (
